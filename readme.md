@@ -66,7 +66,7 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/gitfinder.git
+git clone https://github.com/pinakirath/gitfinder.git
 
 # Navigate to directory
 cd gitfinder
@@ -98,6 +98,7 @@ Generate and copy the token
 Add it to your .env file
 Note: Without a token: 60 requests/hour. With a token: 5,000 requests/hour.
 
+
 🚀 Usage
 Open http://localhost:3000
 Enter a GitHub username in the search bar
@@ -108,6 +109,8 @@ Quick Search Suggestions
 @gaearon - Dan Abramov
 @sindresorhus - Sindre Sorhus
 @yyx990803 - Evan You
+
+
 📡 API Endpoints
 Method	Endpoint	Description
 GET	/	Frontend application
@@ -129,6 +132,8 @@ gitfinder/
 ├── .gitignore          # Git ignore rules
 ├── README.md           # Documentation
 └── LICENSE             # MIT License
+
+
 🎨 Theme Colors
 Element	Hex Code
 Primary (Neon Green)	#00FF41
