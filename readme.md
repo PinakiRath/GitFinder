@@ -1,5 +1,3 @@
-<div align="center">
-  
 # 🔍 GitFinder
 
 **A Modern GitHub Profile Search Application with Terminal/Matrix Theme**
@@ -11,19 +9,15 @@
 [![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=flat-square&logo=framer&logoColor=white)](https://www.framer.com/motion/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 
-<p>
-  <a href="#-features">Features</a> •
-  <a href="#-installation">Installation</a> •
-  <a href="#-usage">Usage</a> •
-  <a href="#-api-endpoints">API</a> •
-  <a href="#-tech-stack">Tech Stack</a>
-</p>
+[✨ Features](#-features) •
+[🛠 Installation](#-installation) •
+[🚀 Usage](#-usage) •
+[📡 API Endpoints](#-api-endpoints) •
+[🛠 Tech Stack](#-tech-stack)
 
 ---
 
-*Discover GitHub profiles with a beautiful hacker-inspired terminal interface*
-
-</div>
+> *Discover GitHub profiles with a beautiful hacker-inspired terminal interface*
 
 ---
 
@@ -43,7 +37,7 @@
 ## 🛠 Tech Stack
 
 | Technology | Purpose |
-|------------|---------|
+| :--- | :--- |
 | Node.js | Runtime Environment |
 | Express.js | Backend Framework |
 | React | Frontend UI Library |
@@ -79,10 +73,8 @@ cp .env.example .env
 
 # Start the server
 npm start
-Open in browser
-text
+Open in browser: http://localhost:3000
 
-http://localhost:3000
 🔐 Environment Variables
 Create a .env file in the root directory:
 
@@ -91,6 +83,7 @@ env
 PORT=3000
 GITHUB_TOKEN=your_github_token_here
 Getting a GitHub Token
+
 Go to GitHub Settings → Developer Settings → Personal Access Tokens
 Click "Generate new token (classic)"
 Select scopes: read:user
@@ -98,17 +91,16 @@ Generate and copy the token
 Add it to your .env file
 Note: Without a token: 60 requests/hour. With a token: 5,000 requests/hour.
 
-
 🚀 Usage
 Open http://localhost:3000
 Enter a GitHub username in the search bar
-Press Enter or click "./run.sh"
+Press Enter or click "Search"
 View the user's profile, stats, and repositories
 Quick Search Suggestions
 @torvalds - Linus Torvalds
 @gaearon - Dan Abramov
 @sindresorhus - Sindre Sorhus
-@yyx990803 - Evan You
+@yyx990803 - Evan 
 
 
 📡 API Endpoints
@@ -118,6 +110,7 @@ GET	/api/users/:username	Fetch user profile
 GET	/api/users/:username/repos	Fetch user repositories
 GET	/api/rate-limit	Check API rate limit
 Example
+
 Bash
 
 curl http://localhost:3000/api/users/torvalds
@@ -142,6 +135,8 @@ Background	#0A0E14
 Card	#1C2128
 Text Primary	#E6EDF3
 Text Secondary	#8B949E
+
+
 🤝 Contributing
 Fork the repository
 Create your branch (git checkout -b feature/amazing-feature)
@@ -167,3 +162,4 @@ git commit -m "Initial commit: GitFinder"
 git branch -M main
 git remote add origin https://github.com/pinakirath/gitfinder.git
 git push -u origin main
+</div> ```
