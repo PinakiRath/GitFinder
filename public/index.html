@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitFinder - GitHub Profile Search</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        midnight: '#0A0E14',
+                        card: '#1C2128',
+                        cardHover: '#252D38',
+                        neon: '#00FF41',
+                        cyan: '#00E5FF',
+                        textPrimary: '#E6EDF3',
+                        textSecondary: '#8B949E',
+                        border: '#30363D'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Space Grotesk', system-ui, sans-serif; 
+            background-color: #0A0E14;
+        }
+        
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ctext x='10' y='20' fill='%2300FF41' font-family='monospace' font-size='10'%3E01001%3C/text%3E%3Ctext x='50' y='40' fill='%2300FF41' font-family='monospace' font-size='10'%3E10110%3C/text%3E%3Ctext x='20' y='60' fill='%2300FF41' font-family='monospace' font-size='10'%3E11001%3C/text%3E%3Ctext x='60' y='80' fill='%2300FF41' font-family='monospace' font-size='10'%3E00101%3C/text%3E%3C/svg%3E");
+            animation: matrix-scroll 20s linear infinite;
+        }
+        
+        @keyframes matrix-scroll {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 1000px; }
+        }
+        
+        .glow-neon {
+            box-shadow: 0 0 5px #00FF41, 0 0 10px #00FF41, 0 0 20px rgba(0, 255, 65, 0.3);
+        }
+        
+        .glow-cyan {
+            box-shadow: 0 0 5px #00E5FF, 0 0 10px #00E5FF, 0 0 20px rgba(0, 229, 255, 0.3);
+        }
+        
+        .glow-text {
+            text-shadow: 0 0 10px #00FF41, 0 0 20px rgba(0, 255, 65, 0.5);
+        }
+        
+        .terminal-card {
+            background: linear-gradient(180deg, #1C2128 0%, #161B22 100%);
+            border: 1px solid #30363D;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+        
+        .terminal-card:hover {
+            border-color: #00FF41;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 255, 65, 0.1);
+        }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1C2128; }
+        ::-webkit-scrollbar-thumb { background: #30363D; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00FF41; }
+        
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .spin { animation: spin 1s linear infinite; }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background: #00FF41;
+            margin-left: 4px;
+            animation: blink 1s step-end infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .grid-pattern {
+            background-image: 
+                linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        .pulse-neon {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 5px #00FF41, 0 0 10px rgba(0, 255, 65, 0.3); }
+            50% { box-shadow: 0 0 10px #00FF41, 0 0 20px rgba(0, 255, 65, 0.5), 0 0 30px rgba(0, 255, 65, 0.3); }
+        }
+    </style>
+</head>
+<body class="bg-midnight text-textPrimary">
+    <div class="matrix-bg"></div>
+    <div class="fixed inset-0 grid-pattern pointer-events-none"></div>
+    <div id="root"></div>
+    
+    <script type="text/babel" src="/js/components.js"></script>
+</body>
+</html>

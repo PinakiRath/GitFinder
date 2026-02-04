@@ -2,9 +2,10 @@
   "name": "gitfinder",
   "version": "1.0.0",
   "description": "GitFinder - GitHub Profile Search App",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node server.js",
+    "dev": "node server.js"
   },
   "dependencies": {
     "axios": "^1.13.4",
