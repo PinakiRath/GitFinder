@@ -1,6 +1,8 @@
-const express = require('express');
-const axios = require('axios');
-require('dotenv').config(); // Load .env file
+import express from 'express';
+import axios from 'axios';
+import dotenv from 'dotenv';
+
+dotenv.config(); // Load .env file
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,12 +18,12 @@ const getGitHubHeaders = () => {
         'Accept': 'application/vnd.github.v3+json',
         'User-Agent': 'GitFinder-App'
     };
-    
+
     // Add authorization if token exists
     if (GITHUB_TOKEN) {
         headers['Authorization'] = 'token ' + GITHUB_TOKEN;
     }
-    
+
     return headers;
 };
 
@@ -31,14 +33,14 @@ app.get('/api/users/:username', async (req, res) => {
         const { username } = req.params;
         console.log('Fetching user:', username);
         console.log('Using token:', GITHUB_TOKEN ? 'Yes' : 'No');
-        
+
         const response = await axios.get(GITHUB_API + '/users/' + username, {
             headers: getGitHubHeaders()
         });
         res.json(response.data);
     } catch (error) {
         console.error('Error:', error.response ? error.response.status : error.message);
-        
+
         if (error.response && error.response.status === 404) {
             return res.status(404).json({ error: 'User not found' });
         }
@@ -744,7 +746,7 @@ app.get('/', (req, res) => {
 });
 
 // Start server
-app.listen(PORT, function() {
+app.listen(PORT, function () {
     console.log('');
     console.log('\x1b[32m╔════════════════════════════════════════════════════════════╗\x1b[0m');
     console.log('\x1b[32m║\x1b[0m                                                            \x1b[32m║\x1b[0m');
