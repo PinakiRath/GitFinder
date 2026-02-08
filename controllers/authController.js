@@ -1,12 +1,12 @@
-const User = require('../models/User');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const config = require('../config/config');
+import User from '../models/User.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import config from '../config/config.js';
 
 // @desc    Register user
 // @route   POST /api/auth/register
 // @access  Public
-const registerUser = async (req, res) => {
+export const registerUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
@@ -62,7 +62,7 @@ const registerUser = async (req, res) => {
 // @desc    Authenticate user & get token
 // @route   POST /api/auth/login
 // @access  Public
-const loginUser = async (req, res) => {
+export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -110,7 +110,7 @@ const loginUser = async (req, res) => {
 // @desc    Get user data
 // @route   GET /api/auth/me
 // @access  Private
-const getMe = async (req, res) => {
+export const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
     res.json(user);
@@ -118,10 +118,4 @@ const getMe = async (req, res) => {
     console.error(err.message);
     res.status(500).send('Server error');
   }
-};
-
-module.exports = {
-  registerUser,
-  loginUser,
-  getMe
 };

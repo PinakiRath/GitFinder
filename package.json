@@ -2,6 +2,7 @@
   "name": "gitfinder",
   "version": "1.0.0",
   "description": "GitFinder - GitHub Profile Search App",
+  "type":"module",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

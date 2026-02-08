@@ -1,15 +1,17 @@
-const express = require('express');
-const router = express.Router();
-const { 
-    getGitHubUser, 
-    getUserRepos, 
-    linkGitHubAccount, 
-    addToSearchHistory, 
+import express from 'express';
+import {
+    getGitHubUser,
+    getUserRepos,
+    linkGitHubAccount,
+    addToSearchHistory,
     getSearchHistory,
     getTrendingUsers
-} = require('../controllers/githubController');
-const auth = require('../middleware/auth');
-const errorHandler = require('../middleware/errorHandler');
+} from '../controllers/githubController.js';
+import auth from '../middleware/auth.js';
+import errorHandler from '../middleware/errorHandler.js';
+import { githubAPI } from '../utils/githubHelper.js';
+
+const router = express.Router();
 
 // Get GitHub user
 router.get('/users/:username', getGitHubUser);
@@ -32,7 +34,6 @@ router.get('/trending', getTrendingUsers);
 // Check rate limit endpoint (useful for debugging)
 router.get('/rate-limit', async (req, res) => {
     try {
-        const { githubAPI } = require('../utils/githubHelper');
         const rateLimitData = await githubAPI.getRateLimit();
         res.json(rateLimitData);
     } catch (error) {
@@ -40,4 +41,4 @@ router.get('/rate-limit', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

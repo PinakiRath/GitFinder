@@ -1,30 +1,30 @@
-const GitHubUser = require('../models/GitHubUser');
-const User = require('../models/User');
-const { githubAPI } = require('../utils/githubHelper');
+import GitHubUser from '../models/GitHubUser.js';
+import User from '../models/User.js';
+import { githubAPI } from '../utils/githubHelper.js';
 
 // @desc    Get GitHub user profile
 // @route   GET /api/github/users/:username
 // @access  Public
-const getGitHubUser = async (req, res) => {
+export const getGitHubUser = async (req, res) => {
   try {
     const { username } = req.params;
-    
+
     // First check if user exists in our database
     let dbUser = await GitHubUser.findOne({ login: username });
-    
+
     if (dbUser) {
       // Update the search count and last accessed time
       dbUser.searchCount += 1;
       dbUser.lastAccessed = Date.now();
       await dbUser.save();
-      
+
       // Return cached data
       return res.json(dbUser);
     }
-    
+
     // If not in DB, fetch from GitHub API
     const githubUserData = await githubAPI.getUser(username);
-    
+
     // Save to database
     dbUser = new GitHubUser({
       githubId: githubUserData.id,
@@ -45,9 +45,9 @@ const getGitHubUser = async (req, res) => {
       searchCount: 1,
       lastAccessed: Date.now()
     });
-    
+
     await dbUser.save();
-    
+
     res.json(dbUser);
   } catch (error) {
     console.error('Error fetching GitHub user:', error);
@@ -67,7 +67,7 @@ const getGitHubUser = async (req, res) => {
 // @desc    Get user repositories
 // @route   GET /api/github/users/:username/repos
 // @access  Public
-const getUserRepos = async (req, res) => {
+export const getUserRepos = async (req, res) => {
   try {
     const { username } = req.params;
     const reposData = await githubAPI.getUserRepos(username);
@@ -81,17 +81,17 @@ const getUserRepos = async (req, res) => {
 // @desc    Add GitHub username to user profile
 // @route   PUT /api/github/link
 // @access  Private
-const linkGitHubAccount = async (req, res) => {
+export const linkGitHubAccount = async (req, res) => {
   try {
     const { githubUsername } = req.body;
-    
+
     // Update user's GitHub username
     const user = await User.findByIdAndUpdate(
       req.user.id,
       { githubUsername },
       { new: true }
     ).select('-password');
-    
+
     res.json(user);
   } catch (err) {
     console.error(err.message);
@@ -102,21 +102,21 @@ const linkGitHubAccount = async (req, res) => {
 // @desc    Add search to user history
 // @route   POST /api/github/history
 // @access  Private
-const addToSearchHistory = async (req, res) => {
+export const addToSearchHistory = async (req, res) => {
   try {
     const { username, result } = req.body;
-    
+
     // Update user's search history
     const user = await User.findById(req.user.id);
-    
+
     // Add to search history (limit to last 20 searches)
     user.searchHistory.unshift({ username, result });
     if (user.searchHistory.length > 20) {
       user.searchHistory.pop();
     }
-    
+
     await user.save();
-    
+
     res.json(user);
   } catch (err) {
     console.error(err.message);
@@ -127,7 +127,7 @@ const addToSearchHistory = async (req, res) => {
 // @desc    Get user search history
 // @route   GET /api/github/history
 // @access  Private
-const getSearchHistory = async (req, res) => {
+export const getSearchHistory = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('searchHistory');
     res.json(user.searchHistory);
@@ -140,24 +140,15 @@ const getSearchHistory = async (req, res) => {
 // @desc    Get trending GitHub users
 // @route   GET /api/github/trending
 // @access  Public
-const getTrendingUsers = async (req, res) => {
+export const getTrendingUsers = async (req, res) => {
   try {
     const trendingUsers = await GitHubUser.find({})
       .sort({ searchCount: -1 })
       .limit(10);
-    
+
     res.json(trendingUsers);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
   }
-};
-
-module.exports = {
-  getGitHubUser,
-  getUserRepos,
-  linkGitHubAccount,
-  addToSearchHistory,
-  getSearchHistory,
-  getTrendingUsers
 };

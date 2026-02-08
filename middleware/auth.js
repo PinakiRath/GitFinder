@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
 
 const auth = async (req, res, next) => {
   // Get token from header
@@ -13,14 +13,14 @@ const auth = async (req, res, next) => {
   try {
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'defaultSecret');
-    
+
     // Get user from token
     req.user = await User.findById(decoded.user.id).select('-password');
-    
+
     next();
   } catch (err) {
     res.status(401).json({ msg: 'Token is not valid' });
   }
 };
 
-module.exports = auth;
+export default auth;

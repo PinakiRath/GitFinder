@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';
+import { registerUser, loginUser, getMe } from '../controllers/authController.js';
+import auth from '../middleware/auth.js';
+
 const router = express.Router();
-const { registerUser, loginUser, getMe } = require('../controllers/authController');
-const auth = require('../middleware/auth');
 
 // @desc    Register user
 // @route   POST /api/auth/register
@@ -18,4 +19,4 @@ router.post('/login', loginUser);
 // @access  Private
 router.get('/me', auth, getMe);
 
-module.exports = router;
+export default router;

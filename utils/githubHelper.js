@@ -1,30 +1,32 @@
-const axios = require('axios');
-const { githubToken, githubApi } = require('../config/config');
+import axios from 'axios';
+import config from '../config/config.js';
+
+const { githubToken, githubApi } = config;
 
 // Helper function to get headers with token
-const getGitHubHeaders = () => {
+export const getGitHubHeaders = () => {
     const headers = {
         'Accept': 'application/vnd.github.v3+json',
         'User-Agent': 'GitFinder-App'
     };
-    
+
     // Add authorization if token exists
     if (githubToken) {
         headers['Authorization'] = 'token ' + githubToken;
     }
-    
+
     return headers;
 };
 
 // GitHub API helper functions
-const githubAPI = {
+export const githubAPI = {
     getUser: async (username) => {
         const response = await axios.get(`${githubApi}/users/${username}`, {
             headers: getGitHubHeaders()
         });
         return response.data;
     },
-    
+
     getUserRepos: async (username) => {
         const response = await axios.get(`${githubApi}/users/${username}/repos`, {
             headers: getGitHubHeaders(),
@@ -36,16 +38,11 @@ const githubAPI = {
         });
         return response.data;
     },
-    
+
     getRateLimit: async () => {
         const response = await axios.get(`${githubApi}/rate_limit`, {
             headers: getGitHubHeaders()
         });
         return response.data;
     }
-};
-
-module.exports = {
-    getGitHubHeaders,
-    githubAPI
 };

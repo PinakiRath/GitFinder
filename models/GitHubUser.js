@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const githubUserSchema = new mongoose.Schema({
   githubId: {
@@ -87,4 +87,4 @@ const githubUserSchema = new mongoose.Schema({
 githubUserSchema.index({ login: 1 });
 githubUserSchema.index({ searchCount: -1 }); // For trending users
 
-module.exports = mongoose.model('GitHubUser', githubUserSchema);
+export default mongoose.model('GitHubUser', githubUserSchema);

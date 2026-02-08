@@ -1,6 +1,7 @@
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
-module.exports = {
+export default {
     port: process.env.PORT || 3000,
     githubToken: process.env.GITHUB_TOKEN,
     githubApi: 'https://api.github.com'

@@ -1,6 +1,7 @@
-const connectDB = require('./config/db');
-const User = require('./models/User');
-const GitHubUser = require('./models/GitHubUser');
+import connectDB from './config/db.js';
+import User from './models/User.js';
+import GitHubUser from './models/GitHubUser.js';
+import bcrypt from 'bcryptjs';
 
 // Sample GitHub users data
 const sampleGitHubUsers = [
@@ -80,10 +81,9 @@ const seedDB = async () => {
     console.log('Inserting sample users...');
     for (const userData of sampleUsers) {
       // Hash password
-      const bcrypt = require('bcryptjs');
       const salt = await bcrypt.genSalt(10);
       userData.password = await bcrypt.hash(userData.password, salt);
-      
+
       await User.create(userData);
     }
 
