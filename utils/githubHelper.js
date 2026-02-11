@@ -3,7 +3,7 @@ import config from '../config/config.js';
 
 const { githubToken, githubApi } = config;
 
-// Helper function to get headers with token
+// Helper function to get headers with token (like async handler)
 export const getGitHubHeaders = () => {
     const headers = {
         'Accept': 'application/vnd.github.v3+json',
