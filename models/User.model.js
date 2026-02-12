@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
-
+import { applyDefaults } from '../../Resume-Analyzer/backend/models/Analysis.model';
+import { JsonWebTokenError } from 'jsonwebtoken';
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -51,4 +52,4 @@ userSchema.pre('save', function (next) {
   next();
 });
 
-export default mongoose.model('User', userSchema);
+export const User = mongoose.model('User', userSchema);
