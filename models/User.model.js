@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
-import { applyDefaults } from '../../Resume-Analyzer/backend/models/Analysis.model';
-import { JsonWebTokenError } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
+const { JsonWebTokenError } = jwt;
+
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
