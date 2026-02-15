@@ -1,5 +1,5 @@
-import GitHubUser from '../models/GitHubUser.js';
-import User from '../models/User.js';
+import GitHubUser from '../models/GitHubUser.model.js';
+import User from '../models/User.model.js';
 import { githubAPI } from '../utils/githubHelper.js';
 
 // @desc    Get GitHub user profile
