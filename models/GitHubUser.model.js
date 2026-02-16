@@ -88,3 +88,4 @@ githubUserSchema.index({ login: 1 });
 githubUserSchema.index({ searchCount: -1 }); // For trending users
 
 export const GitHubUser = mongoose.model('GitHubUser', githubUserSchema);
+export default GitHubUser;
