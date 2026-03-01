@@ -341,7 +341,7 @@ function App() {
         setSearched(true);
 
         try {
-            const userRes = await fetch('/api/users/' + username);
+            const userRes = await fetch('/api/github/users/' + username);
             const userData = await userRes.json();
             
             if (!userRes.ok) {

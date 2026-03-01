@@ -1,4 +1,6 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import jwt from 'jsonwebtoken';
+const { JsonWebTokenError } = jwt;
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -46,9 +48,10 @@ const userSchema = new mongoose.Schema({
 });
 
 // Pre-save middleware to update the updatedAt field
-userSchema.pre('save', function(next) {
+userSchema.pre('save', function (next) {
   this.updatedAt = Date.now;
   next();
 });
 
-module.exports = mongoose.model('User', userSchema);
+export const User = mongoose.model('User', userSchema);
+export default User;
