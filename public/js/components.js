@@ -341,7 +341,7 @@ function App() {
         setSearched(true);
 
         try {
-            const userRes = await fetch('/api/users/' + username);
+            const userRes = await fetch('/api/github/users/' + username);
             const userData = await userRes.json();
             
             if (!userRes.ok) {
@@ -350,7 +350,7 @@ function App() {
             
             setUser(userData);
 
-            const reposRes = await fetch('/api/users/' + username + '/repos');
+            const reposRes = await fetch('/api/github/users/' + username + '/repos');
             if (reposRes.ok) {
                 const reposData = await reposRes.json();
                 setRepos(reposData);
