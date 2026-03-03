@@ -230,7 +230,7 @@ const SearchBar = ({ onSearch, onClear, loading }) => {
         if (username.trim()) onSearch(username);
     };
 
-    const suggestions = ['torvalds', 'gaearon', 'sindresorhus', 'yyx990803'];
+    const suggestions = ['github', 'openai', 'google', 'meta'];
 
     return (
         <form onSubmit={handleSubmit} className="relative">
