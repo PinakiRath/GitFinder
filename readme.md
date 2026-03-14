@@ -1,136 +1,179 @@
-# GitFinder - Modular GitHub Profile Search
+# GitFinder - GitHub Profile Search
 
-A GitHub profile search application with a terminal/matrix theme, refactored into a clean modular architecture for better scalability and maintainability.
+A GitHub profile search application with a terminal/matrix theme, built with a clean **frontend–backend** separated architecture for better scalability and maintainability.
 
 ## 📁 Project Structure
 
 ```
 GitFinder/
-├── config/
-│   └── config.js          # Application configuration and environment variables
-├── middleware/
-│   └── errorHandler.js    # Centralized error handling middleware
-├── routes/
-│   └── github.js          # GitHub API route handlers
-├── utils/
-│   └── githubHelper.js    # GitHub API utility functions and helpers
-├── public/
-│   ├── index.html         # Main frontend HTML template
-│   └── js/
-│       └── components.js  # React frontend components (UI logic)
-├── server.js              # Main application server entry point
-├── package.json           # Project dependencies and scripts
-├── .env                   # Environment configuration file
-└── .env.example          # Environment configuration template
+├── backend/                          ← Server-side (Node.js + Express)
+│   ├── config/
+│   │   ├── config.js                 # App configuration & env variables
+│   │   └── db.js                     # MongoDB connection
+│   ├── controllers/
+│   │   ├── authController.js         # User auth (register/login/me)
+│   │   └── githubController.js       # GitHub profile & repo lookups
+│   ├── middleware/
+│   │   ├── auth.js                   # JWT authentication middleware
+│   │   └── errorHandler.js           # Centralized error handling
+│   ├── models/
+│   │   ├── User.model.js             # App user schema
+│   │   └── GitHubUser.model.js       # Cached GitHub user schema
+│   ├── routes/
+│   │   ├── auth.js                   # Auth route definitions
+│   │   └── github.js                 # GitHub API route definitions
+│   ├── utils/
+│   │   └── githubHelper.js           # GitHub API helper functions
+│   ├── server.js                     # Express entry point
+│   ├── seedDB.js                     # Database seeder script
+│   ├── debug.js                      # Debug launcher
+│   ├── package.json                  # Backend dependencies & scripts
+│   ├── .env                          # Environment config (git-ignored)
+│   └── .env.example                  # Environment config template
+│
+├── frontend/                         ← Client-side (Vite + React + Tailwind v4)
+│   ├── index.html                    # Vite entry HTML
+│   ├── package.json                  # Frontend dependencies & scripts
+│   ├── vite.config.js                # Vite config (React, Tailwind, API proxy)
+│   ├── eslint.config.js              # ESLint config
+│   └── src/
+│       ├── main.jsx                  # React entry point
+│       ├── index.css                 # Tailwind v4 @theme + custom styles
+│       ├── App.jsx                   # Main App component
+│       ├── components/
+│       │   ├── Loader.jsx            # Loading animation
+│       │   ├── StatCard.jsx          # Single stat display
+│       │   ├── UserCard.jsx          # User profile + repo list
+│       │   └── SearchBar.jsx         # Search input + suggestions
+│       └── utils/
+│           └── helpers.js            # formatValue, getLanguageColor, formatDate
+│
+├── .gitignore
+└── readme.md
 ```
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 14+ (LTS recommended)
+- Node.js 18+ (LTS recommended)
 - npm or yarn package manager
+- MongoDB (local or Atlas)
 - GitHub Personal Access Token (optional, for higher rate limits)
 
 ### Quick Setup
-1. **Clone and Install**
+
+1. **Clone the repo**
 ```bash
 git clone <repository-url>
 cd GitFinder
+```
+
+2. **Install dependencies** (both frontend and backend)
+```bash
+# Backend
+cd backend
+npm install
+
+# Frontend
+cd ../frontend
 npm install
 ```
 
-2. **Environment Configuration**
+3. **Configure environment**
 ```bash
-# Copy the example environment file
+cd ../backend
 cp .env.example .env
-
-# Edit .env with your configuration
+# Edit .env with your values
 ```
 
-3. **Environment Variables**
+4. **Environment Variables** (`backend/.env`)
 ```env
-PORT=3000                           # Server port (default: 3000)
-GITHUB_TOKEN=your_github_token_here # Optional: GitHub API token
-NODE_ENV=development               # Environment (development/production)
+PORT=3000                                    # Server port
+GITHUB_TOKEN=your_github_token_here          # GitHub API token (optional)
+MONGODB_URI=mongodb://localhost:27017/gitfinder  # MongoDB connection string
+JWT_SECRET=your_jwt_secret_here              # JWT signing secret
+NODE_ENV=development                         # Environment
 ```
 
-4. **Start the Application**
+5. **Development** (run both in separate terminals)
 ```bash
-# Development mode with auto-restart
+# Terminal 1 — Backend (port 3000)
+cd backend
 npm run dev
 
-# Production mode
+# Terminal 2 — Frontend (port 5173, proxies API to backend)
+cd frontend
+npm run dev
+```
+
+6. **Production build**
+```bash
+# Build the frontend
+cd frontend
+npm run build
+
+# Start the backend (serves built frontend from frontend/dist/)
+cd ../backend
 npm start
 ```
 
 ### Access the Application
-- **Frontend**: http://localhost:3000
-- **API Health**: http://localhost:3000/api/health
-- **Rate Limit Check**: http://localhost:3000/api/rate-limit
+
+| Mode | URL | Description |
+|------|-----|-------------|
+| **Dev (frontend)** | http://localhost:5173 | Vite dev server with HMR |
+| **Dev (backend)** | http://localhost:3000 | API server |
+| **Production** | http://localhost:3000 | Backend serves built frontend |
 
 ## 🏗️ Architecture Overview
 
-### 📦 Config Layer (`config/`)
-- **Centralized Configuration**: Single source of truth for all settings
-- **Environment Management**: Secure handling of sensitive data
-- **API Configuration**: GitHub API endpoints and settings
-- **Flexible Defaults**: Sensible fallback values for all configurations
+### Backend (`backend/`)
 
-### 🛡️ Middleware Layer (`middleware/`)
-- **Error Handling**: Comprehensive error catching and response formatting
-- **Request Processing**: Input validation and sanitization
-- **Security Measures**: Rate limiting and authentication handling
-- **Logging**: Structured request/response logging
+| Layer | Directory | Purpose |
+|-------|-----------|---------|
+| **Config** | `config/` | Centralized settings, env vars, DB connection |
+| **Controllers** | `controllers/` | Request handling & business logic |
+| **Middleware** | `middleware/` | Auth, error handling, request processing |
+| **Models** | `models/` | Mongoose schemas for User & GitHubUser |
+| **Routes** | `routes/` | RESTful endpoint definitions |
+| **Utils** | `utils/` | GitHub API helpers & shared utilities |
 
-### 🔄 Routes Layer (`routes/`)
-- **API Endpoints**: RESTful route definitions for GitHub operations
-- **Request Validation**: Input parameter validation and error handling
-- **Response Formatting**: Consistent API response structure
-- **Route Organization**: Logical grouping by resource type
+### Frontend (`frontend/`) — Vite + React
 
-### ⚙️ Utils Layer (`utils/`)
-- **API Helpers**: Reusable GitHub API integration functions
-- **Data Processing**: Utility functions for data transformation
-- **Business Logic**: Core application logic separated from presentation
-- **HTTP Utilities**: Request/response handling utilities
+| File | Purpose |
+|------|---------|  
+| `vite.config.js` | Vite config — React plugin, Tailwind v4, API proxy |
+| `src/index.css` | Tailwind v4 `@theme` — colors, shadows, fonts, animations |
+| `src/main.jsx` | React entry point (StrictMode + CSS import) |
+| `src/App.jsx` | Main App — state management, API calls, layout |
+| `src/components/Loader.jsx` | Animated loading indicator |
+| `src/components/StatCard.jsx` | Single stat card (repos, followers, etc.) |
+| `src/components/UserCard.jsx` | User profile card + repository list |
+| `src/components/SearchBar.jsx` | Terminal-style search input with suggestions |
+| `src/utils/helpers.js` | `formatValue`, `getLanguageColor`, `formatDate` |
 
-### 🖥️ Frontend (`public/`)
-- **Static Assets**: HTML template and client-side JavaScript
-- **React Components**: Modular UI components with clear responsibilities
-- **Styling**: Tailwind CSS with custom theme configuration
-- **Animations**: Framer Motion for smooth user interactions
+> **Dev mode:** Vite dev server (port 5173) proxies `/api` requests to the backend (port 3000).  
+> **Production:** Backend serves the built `frontend/dist/` folder.
 
-## 🔧 Key Improvements
+## 🔌 API Endpoints
 
-### 1. 🏗️ Modular Architecture
-- **Separation of Concerns**: Clear boundaries between different application layers
-- **Maintainability**: Easier to understand, modify, and extend codebase
-- **Testability**: Independent testing of components and modules
-- **Scalability**: Simple to add new features without disrupting existing code
+### GitHub Routes (`/api/github`)
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/github/users/:username` | Public | Get GitHub user profile |
+| GET | `/api/github/users/:username/repos` | Public | Get user repositories |
+| GET | `/api/github/trending` | Public | Get trending searched users |
+| GET | `/api/github/rate-limit` | Public | Check GitHub API rate limit |
+| PUT | `/api/github/link` | Private | Link GitHub to account |
+| POST | `/api/github/history` | Private | Add to search history |
+| GET | `/api/github/history` | Private | Get search history |
 
-### 2. 🛡️ Enhanced Error Handling
-- **Centralized Error Management**: Single point of error handling and logging
-- **User-Friendly Messages**: Clear error responses for different scenarios
-- **Graceful Degradation**: Proper fallback behavior for API failures
-- **Debugging Support**: Detailed error logging for development
-
-### 3. ⚙️ Configuration Management
-- **Environment-Based Settings**: Flexible configuration for different environments
-- **Secure Secrets Handling**: Proper management of sensitive information
-- **Type Safety**: Configuration validation and default values
-- **Deployment Ready**: Easy configuration for production environments
-
-### 4. 📁 Code Organization
-- **Logical File Structure**: Intuitive directory organization
-- **Consistent Naming**: Clear and descriptive file and function names
-- **Documentation**: Comprehensive inline comments and structure documentation
-- **Best Practices**: Follows established Node.js and Express conventions
-
-### 5. 🚀 Development Experience
-- **Hot Reloading**: Automatic restart during development
-- **Clear Entry Points**: Well-defined application startup process
-- **Modular Dependencies**: Isolated component dependencies
-- **Environment Setup**: Simple and reproducible setup process
+### Auth Routes (`/api/auth`)
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/auth/register` | Public | Register new user |
+| POST | `/api/auth/login` | Public | Login & get JWT token |
+| GET | `/api/auth/me` | Private | Get current user data |
 
 ## 🎯 Features
 
@@ -138,10 +181,16 @@ npm start
 - **User Search**: Find any GitHub user by username
 - **Profile Display**: Detailed user information and statistics
 - **Repository Showcase**: Display user's recent repositories
-- **Real-time Data**: Live GitHub API integration
+- **Caching**: Searched profiles are cached in MongoDB
+- **Trending**: Track most-searched users
+
+### 🔐 Authentication
+- **JWT-based auth**: Register, login, and protected routes
+- **Search History**: Logged-in users can track search history
+- **Account Linking**: Link GitHub username to app account
 
 ### 🎨 User Interface
-- **Terminal Theme**: Matrix-inspired dark theme with green accents
+- **Terminal Theme**: Matrix-inspired dark theme with neon green accents
 - **Responsive Design**: Mobile-friendly and cross-browser compatible
 - **Smooth Animations**: Framer Motion powered transitions and effects
 - **Interactive Elements**: Hover effects and visual feedback
@@ -149,214 +198,92 @@ npm start
 ### ⚡ Performance & Reliability
 - **API Rate Limiting**: Proper handling of GitHub API limits
 - **Error Resilience**: Graceful error handling and user feedback
-- **Fast Loading**: Optimized asset delivery and caching
-- **Progressive Enhancement**: Core functionality works without JavaScript
-
-### 🛠️ Developer Experience
-- **Modular Codebase**: Clean, organized, and maintainable structure
-- **Comprehensive Documentation**: Clear code comments and README
-- **Environment Configuration**: Flexible setup for different environments
-- **Testing Ready**: Structure supports unit and integration testing
+- **Profile Caching**: MongoDB caching reduces redundant API calls
 
 ## 🛠️ Development Guidelines
 
-### 📁 Project Structure Navigation
+### Adding New Features
 
-When working with the codebase, follow this logical flow:
-
-#### 1. Starting Point - `server.js`
-- Entry point for the application
-- Express app initialization
-- Middleware setup
-- Route mounting
-- Server startup
-
-#### 2. Configuration - `config/config.js`
-- Environment variable management
-- Default values and fallbacks
-- Application settings centralization
-
-#### 3. API Routes - `routes/github.js`
-- Route definitions for GitHub operations
-- Request validation logic
-- Error handling middleware integration
-- Response formatting
-
-#### 4. API Utilities - `utils/githubHelper.js`
-- GitHub API interaction functions
-- HTTP request helpers
-- Response data processing
-- Authentication header management
-
-#### 5. Error Handling - `middleware/errorHandler.js`
-- Global error catching
-- Error type categorization
-- Response formatting for different error types
-- Logging implementation
-
-#### 6. Frontend - `public/` directory
-- `index.html`: Main HTML structure and CSS
-- `js/components.js`: React frontend components and state management
-
-### 🆕 Adding New Features
-
-1. **API Endpoints** 
+1. **New API Endpoint**
 ```bash
-# Create new route file in routes/
-touch routes/newFeature.js
-# Register in server.js
-app.use('/api/new-feature', require('./routes/newFeature'));
+# 1. Create controller in backend/controllers/
+# 2. Create route in backend/routes/
+# 3. Register route in backend/server.js
 ```
 
-2. **Utility Functions**
+2. **New Frontend Component**
 ```bash
-# Add to utils/ directory
-# Update relevant route handlers to use new utilities
+# Create a new file in frontend/src/components/MyComponent.jsx
+# Import it in the parent component that needs it
+import MyComponent from './components/MyComponent';
 ```
 
-3. **Frontend Components**
+3. **New Configuration**
 ```bash
-# Modify public/js/components.js
-# Add new React components or extend existing ones
+# Update backend/config/config.js
+# Add new env variables to backend/.env.example
 ```
 
-4. **Configuration**
+### Running Commands
+
 ```bash
-# Update config/config.js if needed
-# Add new environment variables to .env.example
+# --- Backend (from backend/) ---
+npm run dev       # Dev server with nodemon
+npm start         # Production server
+npm run seed      # Seed database
+
+# --- Frontend (from frontend/) ---
+npm run dev       # Vite dev server with HMR
+npm run build     # Production build → dist/
+npm run preview   # Preview production build
+npm run lint      # ESLint check
 ```
 
-### 🧪 Testing Strategy
+## 📦 Tech Stack
 
-The modular structure enables comprehensive testing:
+### Backend
+- **Node.js** (v14+) — JavaScript runtime
+- **Express.js** — Web framework
+- **MongoDB + Mongoose** — Database & ODM
+- **Axios** — HTTP client for GitHub API
+- **JWT + bcryptjs** — Authentication
+- **Dotenv** — Environment management
 
-#### Unit Testing
-- Test individual utility functions in isolation
-- Mock external API calls
-- Test error handling scenarios
-- Validate input/output transformations
+### Frontend
+- **Vite 7** — Lightning-fast build tool with HMR
+- **React 19** — Component-based UI
+- **Tailwind CSS v4** — Utility-first styling (with `@tailwindcss/vite`)
+- **Framer Motion** — Animation library
+- **ESLint** — Code linting
+- **Google Fonts** — JetBrains Mono & Space Grotesk
 
-#### Integration Testing
-- Test route handlers with mocked dependencies
-- Verify middleware chain execution
-- Test configuration loading
-- Validate API response formats
+## 🛡️ Security Considerations
 
-#### Frontend Testing
-- Component rendering tests
-- State management verification
-- User interaction testing
-- Responsive design validation
+- Never commit `.env` files (enforced via `.gitignore`)
+- Validate all user inputs
+- Passwords hashed with bcrypt (salt rounds: 10)
+- JWT tokens expire after 7 days
+- Keep dependencies updated
 
-### 📦 Dependency Management
+## 🚀 Deployment
 
-#### Core Dependencies
-- **express**: Web framework and routing
-- **axios**: HTTP client for API requests
-- **dotenv**: Environment variable management
-
-#### Development Dependencies
-- Consider adding testing frameworks (Jest, Supertest)
-- Linting tools (ESLint, Prettier)
-- Development server with hot reloading
-
-### 🚀 Deployment Considerations
-
-#### Environment Variables
 ```bash
 # Production .env
 NODE_ENV=production
 PORT=8080
 GITHUB_TOKEN=production_token_here
+MONGODB_URI=your_production_mongodb_uri
+JWT_SECRET=your_strong_secret
 ```
 
-#### Build Process
-- Static asset optimization
-- Environment-specific configuration
-- Security hardening
-- Performance monitoring setup
+### Hosting Options
+- **Heroku** / **Render** — Simple deployment with env vars
+- **Vercel** — Serverless functions support
+- **AWS** — EC2 or Elastic Beanstalk
+- **DigitalOcean** — App Platform or Droplets
 
-#### Hosting Options
-- **Heroku**: Simple deployment with environment variables
-- **Vercel**: Serverless functions support
-- **AWS**: EC2 or Elastic Beanstalk
-- **DigitalOcean**: App Platform or Droplets
-
-## 📦 Dependencies & Technologies
-
-### 🏗️ Backend Stack
-- **Node.js** (v14+): JavaScript runtime environment
-- **Express.js**: Web application framework
-- **Axios**: Promise-based HTTP client
-- **Dotenv**: Environment variable management
-
-### 🎨 Frontend Technologies
-- **React** (CDN): Component-based UI library
-- **Tailwind CSS** (CDN): Utility-first CSS framework
-- **Framer Motion** (CDN): Production-ready motion library
-- **Google Fonts**: JetBrains Mono & Space Grotesk typography
-
-
-#### JavaScript/Node.js
-- Use ES6+ features consistently
-- Follow Airbnb JavaScript Style Guide
-- Maintain consistent indentation (2 spaces)
-- Use meaningful variable and function names
-- Keep functions focused and single-purpose
-
-#### Git Commit Messages
-```bash
-# Format: type(scope): description
-feat(routes): add user repository search endpoint
-fix(middleware): handle GitHub API rate limit errors
-docs(readme): update deployment instructions
-style(css): fix responsive design breakpoints
-test(utils): add GitHub API helper tests
-```
-
-### 🛡️ Security Considerations
-
-- Never commit sensitive information
-- Validate all user inputs
-- Sanitize data before processing
-- Keep dependencies updated
-- Review security best practices
-
-### 📚 Documentation Standards
-
-- Update README for significant changes
-- Add JSDoc comments for functions
-- Document API endpoints
-- Include usage examples
-- Maintain clear installation instructions
-
-### 🤖 Development Workflow
-
-```bash
-# 1. Set up development environment
-npm install
-cp .env.example .env
-# Configure your environment variables
-
-# 2. Run development server
-npm run dev
-
-# 3. Make changes and test
-# Visit http://localhost:3000
-
-# 4. Run linting and formatting
-npm run lint
-npm run format
-
-# 5. Commit and push changes
-git add .
-git commit -m "feat: add new feature"
-git push origin feature/your-feature
-```
-
-
-
+---
 
 <p align="center">
-  <strong>Built with ❤️ using Node.js, Express, React, and Tailwind CSS</strong>
+  <strong>Built with ❤️ using Vite, React, Tailwind CSS, Node.js & Express</strong>
 </p>
