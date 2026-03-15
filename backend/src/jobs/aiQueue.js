@@ -4,12 +4,12 @@ import logger from '../config/logger.js';
 import redisClient from '../config/redis.js';
 import axios from 'axios';
 
-// Define the Queue
+// Define the Queue sharing the robust ioredis configuration
 export const aiAnalysisQueue = new Queue('ai-analysis', { 
     connection: redisClient 
 });
 
-// Define the Worker process
+// Define the Worker process sharing the same ioredis connection
 const aiWorker = new Worker('ai-analysis', async (job) => {
     const { repoName, owner } = job.data;
     const fullRepoName = `${owner}/${repoName}`;

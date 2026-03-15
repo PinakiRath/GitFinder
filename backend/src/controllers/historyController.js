@@ -1,8 +1,6 @@
 import SearchHistory from '../models/SearchHistory.model.js';
+import logger from '../config/logger.js';
 
-// @desc    Get search history
-// @route   GET /api/history
-// @access  Private
 export const getHistory = async (req, res) => {
     try {
         const history = await SearchHistory.find({ userId: req.user.id })
@@ -10,14 +8,11 @@ export const getHistory = async (req, res) => {
             .limit(20);
         res.json({ success: true, data: history });
     } catch (err) {
-        console.error(err);
+        logger.error(`History Fetch Error: ${err.message}`);
         res.status(500).json({ success: false, message: 'Server Error' });
     }
 };
 
-// @desc    Add to search history
-// @route   POST /api/history
-// @access  Private
 export const addHistory = async (req, res) => {
     try {
         const { username } = req.body;
@@ -34,7 +29,7 @@ export const addHistory = async (req, res) => {
         const savedEntry = await newEntry.save();
         res.status(201).json({ success: true, data: savedEntry });
     } catch (err) {
-        console.error(err);
+        logger.error(`History Add Error: ${err.message}`);
         res.status(500).json({ success: false, message: 'Server Error' });
     }
 };

@@ -1,8 +1,6 @@
-import axios from 'axios';
+import githubService from '../services/githubService.js';
+import logger from '../config/logger.js';
 
-// @desc    Compare two GitHub users
-// @route   POST /api/compare
-// @access  Private
 export const compareUsers = async (req, res) => {
     try {
         const { username1, username2 } = req.body;
@@ -11,21 +9,9 @@ export const compareUsers = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Please provide both username1 and username2' });
         }
 
-        const headers = {
-            'User-Agent': 'GitFinder-Pro'
-        };
-
-        if (process.env.GITHUB_TOKEN) {
-            headers.Authorization = `token ${process.env.GITHUB_TOKEN}`;
-        }
-
         const fetchUserMetrics = async (username) => {
-            const userRes = await axios.get(`https://api.github.com/users/${username}`, { headers });
-            const userData = userRes.data;
-            
-            // Get limited repos instead of all to save rate limits
-            const reposRes = await axios.get(`https://api.github.com/users/${username}/repos?per_page=100`, { headers });
-            const repos = reposRes.data;
+            const userData = await githubService.getProfile(username);
+            const repos = await githubService.getRepos(username);
 
             let totalStars = 0;
             const languages = {};
@@ -33,22 +19,17 @@ export const compareUsers = async (req, res) => {
             repos.forEach(repo => {
                 totalStars += repo.stargazers_count;
                 if (repo.language) {
-                    if (languages[repo.language]) {
-                        languages[repo.language]++;
-                    } else {
-                        languages[repo.language] = 1;
-                    }
+                    languages[repo.language] = (languages[repo.language] || 0) + 1;
                 }
             });
 
-            // Convert languages to sorted array
             const topLanguages = Object.keys(languages)
                 .map(key => ({ language: key, count: languages[key] }))
                 .sort((a, b) => b.count - a.count)
                 .slice(0, 3);
 
             return {
-                username,
+                username: userData.login,
                 avatar_url: userData.avatar_url,
                 repoCount: userData.public_repos,
                 followers: userData.followers,
@@ -71,7 +52,7 @@ export const compareUsers = async (req, res) => {
         });
 
     } catch (err) {
-        console.error(err.response?.data?.message || err.message);
+        logger.error(`Compare Users Error: ${err.message}`);
         res.status(500).json({ success: false, message: 'Server Error Comparing Users' });
     }
 };
