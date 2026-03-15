@@ -10,7 +10,7 @@ const startServer = async () => {
         await connectDB();
         await connectRedis();
 
-        const port = config.port || 3000;
+        const port = process.env.PORT || 5000;
         
         app.listen(port, () => {
             logger.info(`Server effectively bound to Port ${port}`);

@@ -22,7 +22,7 @@ redisClient.on('ready', () => {
 });
 
 export const connectRedis = async () => {
-    // ioredis connects automatically. We just keep this export intact to avoid breaking index.js.
+    // ioredis connects automatically. We just keep this export intact to avoid breaking server.js.
     try {
         if (redisClient.status === 'ready') {
             console.log("Redis connected successfully");
